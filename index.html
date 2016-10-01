@@ -1,0 +1,50 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Phila L&I</title>
+  <style>
+        html, body, #mapid {
+            height: 100%;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="mapid"></div>
+<script type="text/javascript">
+  var map = L.map('mapid').setView([39.9526, -75.1652], 12);
+  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(map);
+
+  var myStyle = {
+    "color": "#ff7800",
+    "weight": 5,
+    "opacity": 0.65
+  };
+
+  // L.geoJson("data/Districts.geojson", {
+  //   style: myStyle
+  // }).addTo(mymap);
+
+  var district_boundary = new L.geoJson();
+  district_boundary.addTo(map);
+
+  $.ajax({
+  dataType: "json",
+  url: "data/district.geojson",
+  success: function(data) {
+      $(data.features).each(function(key, data) {
+          district_boundary.addData(data);
+      });
+  }
+  }).error(function() {});
+
+</script>
+</body>
+</html>
