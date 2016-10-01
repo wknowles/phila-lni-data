@@ -1,4 +1,4 @@
-d3.json("/data/active_housing.json", function(data) {
+d3.json("data/active_housing.json", function(data) {
   // console.log(data[0]);
   var dateExtent = d3.extent(data, function(d) { return d.issue_date; });
   console.log(dateExtent);
