@@ -1,3 +1,5 @@
+# Quick and Dirty date and time editing.
+
 import csv
 import sys
 from datetime import datetime
