@@ -29,12 +29,11 @@ var svg = d3.select("body").append("svg")
 d3.csv("data/data.csv", function(error, data) {
   if (error) throw error;
 
-
   // format the data
   data.forEach(function(d) {
       d.year = parseTime(d.year);
       d.total = +d.total;
-      console.log(d.year, d.total)
+      console.log(d.year.getFullYear(), d.total)
   });
 
   // Scale the range of the data
