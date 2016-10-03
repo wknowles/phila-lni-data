@@ -9,6 +9,7 @@ var y = d3.scaleLinear().range([height, 0]);
 
 // define the line
 var graphline = d3.line()
+    .curve(d3.curveMonotoneX)
     .x(function(d) { return x(d.key); })
     .y(function(d) { return y(d.value); });
 
@@ -22,15 +23,12 @@ var svg = d3.select("body").append("svg")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-// parse the date / time
-//var parseTime = d3.timeParse("%Y-%m-%d");
-
 /////////
 
 // import data from api
 d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
   + "$select=issuedate,expirationdate,censustract,fulladdress"
-  + "&$where=issuedate>%272016-07-01T00:00:00.000%27"
+  + "&$where=issuedate>%272016-09-01T00:00:00.000%27"
   + "&licensestatus=Active"
   + "&revenuecode=3202"
   + "&$order=issuedate"
@@ -42,16 +40,17 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
   // Make sure our numbers are really numbers
   data.forEach(function (d) {
     d.censustract = +d.censustract;
-    d.issuedate = moment(d.issuedate).format("DD");
+    d.issuedate = moment(d.issuedate);
     //d.issuedate = parseTime(d.issuedate);
     d.expirationdate = moment(d.expirationdate);
   });
 
+  // nest and rollup data
   var licenseByDate = d3.nest()
-  .key(function(d) { return d.issuedate }).sortKeys(d3.ascending)
-  //.key(function(d) { return d.censustract; })
-  .rollup(function(d) { return d.length; })
-  .entries(data);
+    .key(function(d) { return d.issuedate }).sortKeys(d3.ascending)
+    //.key(function(d) { return d.censustract; })
+    .rollup(function(d) { return d.length; })
+    .entries(data);
 
   // Scale the range of the data
   x.domain([d3.min(licenseByDate, function(d) { return d.key; }), d3.max(licenseByDate, function(d) { return d.key; })]);
@@ -67,7 +66,6 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
   svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
-
   // text label for the x axis
   svg.append("text")
       .attr("transform",
@@ -80,7 +78,6 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
   // Add the y Axis
   svg.append("g")
       .call(d3.axisLeft(y));
-
   // text label for the y axis
   svg.append("text")
       .attr("transform", "rotate(-90)")
@@ -92,6 +89,7 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
       .text("Total");
 
 
+// begin tooltip mouse over
   var bisectDate = d3.bisector(function(d) { return d.key; }).left;
 
   var focus = svg.append("g")
@@ -122,6 +120,8 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
     focus.attr("transform", "translate(" + x(d.key) + "," + y(d.value) + ")");
     focus.select("text").text(d.value);
   }
+// end tooltip mouse over
+
 
   console.log(JSON.stringify(licenseByDate));
   //console.log(licenseByDate)
