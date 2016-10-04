@@ -4,8 +4,8 @@
 <style>
 
 path {
-    fill: #aaa;
-    stroke: #fff;
+    fill: #fff;
+    stroke: #aaa;
     stroke-width: .75px;
     pointer-events: all;
 }
@@ -36,86 +36,163 @@ path {
     top:150px;
     left: 50px;
 }
+
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  width: 150px;
+  height: 25px;
+  padding: 2px;
+  font-size: 10px;
+  background: #FFFFE0;
+  border: 1px;
+  border-radius: 8px;
+  pointer-events: none;
+}
 </style>
 <body>
 
 <script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
 <script src="http://d3js.org/topojson.v1.min.js"></script>
 
 <script>
-
+// set up map
 var width = 800,
-    height = 500;
+    height = 780;
 
-var projection = d3.geoMercator()
-    .center([-75.12, 40])
-    .scale(80000);
-
-var path = d3.geoPath()
-    .projection(projection);
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var text1 = svg.append("text")
-    .attr("y", height/8)
-    .attr("dy", "0em")
-    .attr("class", "text")
-    .attr("text-anchor", "left");
+var projection = d3.geoMercator()
+    .center([-75.08, 40.052])
+    .scale(128000);
 
-var text2 = svg.append("text")
-    .attr("y", height/8)
-    .attr("dy", "2em")
-    .attr("class", "text")
-    .attr("text-anchor", "left");
+var path = d3.geoPath()
+    .projection(projection);
 
 
-</script>
 
-<script>
-//import active rentals anc census tracts
-d3.csv("data/active_rental.csv", function(error, data) {
-  if (error) throw error;
+// .domain[d3.min(data, function(d) { return d.total; }), d3.max(data, function(d) { return d.total; })];
 
- // nest and rollup data
-  var censusCount = d3.nest()
-    .key(function(d) { return d.census_tract })
-    .rollup(function(d) { return d.length; })
-    .entries(data);
+// var color = d3.scaleLinear().domain([minimum, maximum]).range([minimumColor, maximumColor]);
 
-console.log(JSON.stringify(censusCount));
 
-d3.json("data/census_tracts.json", function(error, topology) {
-    svg.selectAll("path")
-        .data(topojson.feature(topology, topology.objects.Census_Tracts_2010).features)
-      .enter().append("path")
-        .attr("class", "tracts")
-  .attr("id", function(d){return d.properties.NAME10;})
-  .attr("d", path)
-  .style("fill", function(d) {return color(d.properties.NAME10); })
-  .on("mouseover", function(){d3.select(this);
-      text1.text("tract: " + this.id)
-      text2.text("total: " + this.value)
-    ;})
+
+// read map file and data
+queue()
+  .defer(d3.json, "data/census_tracts.json")
+  .defer(d3.csv, "data/census.csv")
+  .await(ready);
+
+//   //Start of Choropleth drawing
+  function ready(error, map, data) {
+   var tractById = {};
+   var totalById = {};
+
+   data.forEach(function(d) {
+    tractById[d.census_tract] = +d.total;
+    totalById[d.total] = d.census_tract;
   });
 
-var minimum = d3.min(censusCount, function(d) { return d.value; }), maximum = d3.max(censusCount, function(d) { return d.value; });
-var minimumColor = "#edf8e9", maximumColor = "#238b45";
-var color = d3.scaleLinear().domain([minimum, maximum]).range([minimumColor, maximumColor]);
+var minimumColor = "#efedf5", maximumColor = "#756bb1";
+var color = d3.scaleLinear()
+              .domain(d3.extent(data, function(d) { return +d.total; }))
+              .range([minimumColor, maximumColor]);
 
-var w = 140, h = 300;
-var key = d3.select("body").append("svg").attr("id", "key").attr("width", w).attr("height", h);
-var legend = key.append("defs").append("svg:linearGradient").attr("id", "gradient").attr("x1", "100%").attr("y1", "0%").attr("x2", "100%").attr("y2", "100%").attr("spreadMethod", "pad");
-    legend.append("stop").attr("offset", "0%").attr("stop-color", maximumColor).attr("stop-opacity", 1);
-    legend.append("stop").attr("offset", "100%").attr("stop-color", minimumColor).attr("stop-opacity", 1);
+console.log(d3.extent(data, function(d) { return +d.total; }))
+//Drawing Choropleth
 
-key.append("rect").attr("width", w - 100).attr("height", h - 100).style("fill", "url(#gradient)").attr("transform", "translate(0,10)");
+  svg.append("g")
+  .attr("class", "map")
+  .selectAll("path")
+  .data(topojson.feature(map, map.objects.Census_Tracts_2010).features)
+  .enter().append("path")
+  .attr("d", path)
+  .attr("id", function(d) {
+    return d.properties.NAME10;
+  })
+  .style("fill", function(d) {
+    return color(tractById[d.properties.NAME10]);
+  })
+  .style("opacity", 0.8)
 
-var y = d3.scaleLinear().range([200, 0]).domain([minimum, maximum]);
-var yAxis = d3.axisRight().scale(y);
-key.append("g").attr("class", "y axis").attr("transform", "translate(42,10)").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 30).attr("dy", ".71em").style("text-anchor", "end").text("% Below FPL");
+    //Adding mouseevents
+  .on("mouseover", function(d) {
+    d3.select(this).transition().duration(300).style("opacity", 1);
+    div.transition().duration(300)
+    .style("opacity", 1)
+    div.text("Census Tract = " + d.properties.NAME10 + " Total = " + tractById[d.properties.NAME10])
+    .style("left", (d3.event.pageX) + "px")
+    .style("top", (d3.event.pageY -30) + "px");
+  })
+  .on("mouseout", function() {
+    d3.select(this)
+    .transition().duration(300)
+    .style("opacity", 0.8);
+    div.transition().duration(300)
+    .style("opacity", 0);
+  })
 
-});
+// console.log(totalById[3])
+// console.log(tractById[3])
+// console.log(JSON.stringify(totalById))
+
+}; // <-- End of Choropleth drawing
+
+  //Adding legend for our Choropleth
+
+  // var legend = svg.selectAll("g.legend")
+  // .data(color_domain)
+  // .enter().append("g")
+  // .attr("class", "legend");
+
+  // var ls_w = 20, ls_h = 20;
+
+  // legend.append("rect")
+  // .attr("x", 20)
+  // .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+  // .attr("width", ls_w)
+  // .attr("height", ls_h)
+  // .style("fill", function(d, i) { return color(d); })
+  // .style("opacity", 0.8);
+
+  // legend.append("text")
+  // .attr("x", 50)
+  // .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+  // .text(function(d, i){ return legend_labels[i]; });
+
+
+// //import active rentals anc census tracts
+// d3.csv("data/active_rental.csv", function(error, data) {
+//   if (error) throw error;
+
+//  // nest and rollup data
+//   var censusCount = d3.nest()
+//     .key(function(d) { return d.census_tract })
+//     .rollup(function(d) { return d.length; })
+//     .entries(data);
+
+// //console.log(JSON.stringify(censusCount));
+
+// d3.json("data/census_tracts.json", function(error, topology) {
+//     svg.selectAll("path")
+//         .data(topojson.feature(topology, topology.objects.Census_Tracts_2010).features)
+//       .enter().append("path")
+//         .attr("class", "tracts")
+//   .attr("id", function(d){return d.properties.NAME10;})
+//   .attr("d", path)
+//   .style("fill", function(d) {return color(d.properties.NAME10); })
+//   });
+
+// var minimum = d3.min(censusCount, function(d) { return d.value; }), maximum = d3.max(censusCount, function(d) { return d.value; });
+// var minimumColor = "#edf8e9", maximumColor = "#238b45";
+// var color = d3.scaleLinear().domain([minimum, maximum]).range([minimumColor, maximumColor]);
+//  });
 
 </script>
