@@ -19,19 +19,19 @@ text {
 </style>
 <body>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v0.min.js"></script>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
 
 <script>
 
 var width = 800,
-    height = 700;
+    height = 500;
 
-var projection = d3.geo.mercator()
-    .center([-75.12, 40.05])
-    .scale(100000);
+var projection = d3.geoMercator()
+    .center([-75.12, 40])
+    .scale(80000);
 
-var path = d3.geo.path()
+var path = d3.geoPath()
     .projection(projection);
 
 var svg = d3.select("body").append("svg")
@@ -44,7 +44,7 @@ var text = svg.append("text")
 
 d3.json("data/census_tracts.json", function(error, topology) {
     svg.selectAll("path")
-        .data(topojson.object(topology, topology.objects.Census_Tracts_2010).geometries)
+        .data(topojson.feature(topology, topology.objects.Census_Tracts_2010).features)
       .enter().append("path")
         .attr("class", "tracts")
   .attr("id", function(d){return d.properties.NAMELSAD10;})
@@ -67,7 +67,7 @@ d3.csv("data/active_rental.csv", function(error, data) {
     .rollup(function(d) { return d.length; })
     .entries(data);
 
-console.log(JSON.stringify(censusCount));
+//console.log(JSON.stringify(censusCount));
 });
 
 </script>
