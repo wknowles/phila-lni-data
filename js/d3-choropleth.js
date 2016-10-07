@@ -1,72 +1,17 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-
-<style>
-
-path {
-    fill: #fff;
-    stroke: #7f7f7f;
-    stroke-width: .75px;
-    pointer-events: all;
-}
-
-.fill {
-      fill: #fff;
-      stroke: white;
-  }
-
-.text {
-  font-family: sans-serif;
-  font-size: 24px;
-  color: #000;
-}
-
-.axis text {
-    font: 10px sans-serif;
-}
-
-.axis line, .axis path {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-
-#key    {
-    position: absolute;
-    top: 100px;
-    left: 50px;
-}
-
-div.tooltip {
-  position: absolute;
-  text-align: left;
-  left: 500px;
-  top: 500px;
-  padding: 8px;
-  font-size: 20px;
-  /*background: #FFFFE0;*/
-}
-</style>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://d3js.org/queue.v1.min.js"></script>
-<script src="https://d3js.org/topojson.v1.min.js"></script>
-<body>
-<h1 style="text-align: center;">Number of active rental licenses applied for in 2016 grouped by census tract</h1>
-
-<script>
 // set up map
-var width = 800,
+var width = 470,
     height = 500;
 
 var div = d3.select("body").append("div")
     .attr("class", "tooltip")
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#chart").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("class", "map");
 
 var projection = d3.geoMercator()
-    .center([-75.12, 40.002])
+    .center([-74.94, 40.002])
     .scale(80000);
 
 var path = d3.geoPath()
@@ -144,12 +89,19 @@ var color = d3.scaleLinear()
 // console.log(tractById[3])
 // console.log(JSON.stringify(totalById))
 
-//Adding legend for our Choropleth
-var w = 140, h = 200;
+// var svg = d3.select("body").append("svg")
+//     .attr("width", width)
+//     .attr("height", height);
 
-var key = d3.select("body")
-            .append("svg")
+// svg.append("g")
+// .attr("class", "legend")
+
+//Adding legend for our Choropleth
+var w = 60, h = 180;
+
+var key = d3.select("#chart").append("svg")
             .attr("id", "key")
+            .attr("class", "key")
             .attr("width", w)
             .attr("height", h);
 
@@ -165,7 +117,7 @@ var legend = key.append("defs")
 legend.append("stop").attr("offset", "0%").attr("stop-color", maximumColor).attr("stop-opacity", 1);
 legend.append("stop").attr("offset", "100%").attr("stop-color", minimumColor).attr("stop-opacity", 1);
 
-key.append("rect").attr("width", w - 100).attr("height", h - 20).style("fill", "url(#gradient)").attr("transform", "translate(0,10)");
+key.append("rect").attr("width", w - 40).attr("height", h - 20).style("fill", "url(#gradient)").attr("transform", "translate(0,10)");
 
 var y = d3.scaleLinear()
           .range([h - 20, 0])
@@ -174,7 +126,7 @@ var y = d3.scaleLinear()
 var yAxis = d3.axisRight(y);
 key.append("g")
   .attr("class", "y axis")
-  .attr("transform", "translate(42,10)")
+  .attr("transform", "translate(24,10)")
   .call(yAxis).append("text")
   .attr("transform", "rotate(-90)")
   .attr("y", 30).attr("dy", "1em")
@@ -185,5 +137,3 @@ key.append("g")
 }; // <-- End of Choropleth drawing
 
 
-
-</script>
