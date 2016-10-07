@@ -104,11 +104,14 @@ info.onAdd = function (map) {
     this.update();
     return this._div;
 };
+
+//console.log(censusLayer.Census_Tracts_2010.properties.NAMELSAD10)
+
 // method that we will use to update the control based on feature properties passed
-info.update = function (props) {
-    this._div.innerHTML = '<h4>US Population Density</h4>' +  (props ?
-        '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-        : 'Hover over a state');
+info.update = function (properties) {
+    this._div.innerHTML = '<h4>Active rental licenses in Philadelphia</h4>' +  (properties ?
+        '<b>' + properties.Census_Tracts_2010.properties.NAMELSAD10  + '</b><br />'  + ' people / mi<sup>2</sup>'
+        : 'Hover over a census tract');
 };
 info.addTo(map);
 // end info

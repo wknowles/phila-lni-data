@@ -11,7 +11,7 @@ var y = d3.scaleLinear().range([height, 0]);
 
 var xAxis = d3.axisBottom()
     .scale(x)
-    .tickFormat(moment().format("ddd"))
+    //.tickFormat(moment().format("m"))
 
 var yAxis = d3.axisLeft()
     .scale(y)
@@ -27,7 +27,7 @@ var svgBar = d3.select("body").append("svg")
 // import data from api
 d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
   + "$select=issuedate,expirationdate,censustract,fulladdress"
-  + "&$where=issuedate>%272016-09-01T00:00:00.000%27"
+ + "&$where=issuedate>%272016-01-01T00:00:00.000%27"
   + "&licensestatus=Active"
   + "&revenuecode=3202"
   + "&$order=issuedate"
@@ -46,11 +46,12 @@ d3.csv("https://data.phila.gov/resource/st4m-d4h3.csv?"
 
   // nest and rollup data
   var licenseByDate = d3.nest()
-    .key(function(d) { return d.issuedate.day() }).sortKeys(d3.ascending)
+    .key(function(d) { return d.issuedate.month() })
     //.key(function(d) { return d.censustract; })
     .rollup(function(d) { return d.length; })
     .entries(data);
 
+  //console.log(JSON.stringify(licenseByDate));
   x.domain(licenseByDate.map(function(d) { return d.key; }));
   y.domain([0, d3.max(licenseByDate, function(d) { return d.value; })]);
 
