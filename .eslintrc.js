@@ -1,4 +1,4 @@
-{
+module.exports = {
     "env": {
         "browser": true
     },
@@ -6,7 +6,7 @@
     "rules": {
         "indent": [
             "error",
-            "space"
+            4
         ],
         "linebreak-style": [
             "error",
@@ -14,11 +14,17 @@
         ],
         "quotes": [
             "error",
-            "double"
+            "single"
         ],
         "semi": [
             "error",
             "always"
         ]
+    },
+    "globals": {
+        "d3": true,
+        "moment": true,
+        "queue": true,
+        "topojson": true
     }
-}
+};

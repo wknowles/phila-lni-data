@@ -1,0 +1,31 @@
+{
+  "name": "phila-lni-data",
+  "version": "1.0.0",
+  "description": "goofing around with lni data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wknowles/phila-lni-data.git"
+  },
+  "keywords": [
+    "L&I",
+    "Philadelphia",
+    "open-data"
+  ],
+  "author": "william knowles",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wknowles/phila-lni-data/issues"
+  },
+  "homepage": "https://github.com/wknowles/phila-lni-data#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-uglify": "^2.0.0"
+  },
+  "dependencies": {}
+}
