@@ -1,0 +1,111 @@
+<!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+      <title>Phila L&I</title>
+      <!--build:css css/style.min.css-->
+      <link rel="stylesheet" href="css/style.css" />
+      <!--endbuild-->
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script src="https://d3js.org/queue.v1.min.js"></script>
+      <script src="https://d3js.org/topojson.v1.min.js"></script>
+      <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+      <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    </head>
+  <body>
+<section class="hero is-dark is-medium is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        A quick look at Philadadelphia's L&I Data.
+      </h1>
+      <h2 class="subtitle">
+        Built as part of <a href="">Code for Philly's</a> <a href="">#CaaSH</a> hackathon.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <nav class="level">
+      <div class="level-item has-text-centered">
+        <p class="heading">Total Active Licenses</p>
+        <p class="title">3,456</p>
+      </div>
+      <div class="level-item has-text-centered">
+        <p class="heading">Licences this month</p>
+        <p class="title">123</p>
+      </div>
+      <div class="level-item has-text-centered">
+        <p class="heading">Other Number</p>
+        <p class="title">456K</p>
+      </div>
+      <div class="level-item has-text-centered">
+        <p class="heading">One more!</p>
+        <p class="title">789</p>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column content">
+      <h1 class="title">Finding active rental licenses</h1>
+        <p>data, ect</p>
+        <p>practice MOVE Orange Line phantic Rocky tomato pie Flyers Wawa beer distributor Yuengling soda soft pretzel NoLibs Comcast Temple Old City Betsy Ross Bob and Barbara's Victory Roots state store bike race Phillies Utley Reading Terminal Market Frankford Hall bell pretzel Penn Penn’s Landing.</p>
+      <h2>Census Tracts</h2>
+        <p> Some words about the graphic. practice MOVE Orange Line phantic Rocky tomato pie Flyers Wawa beer distributor Yuengling soda soft pretzel NoLibs Comcast Temple Old City Betsy Ross Bob and Barbara's Victory Roots state store bike race Phillies Utley Reading Terminal Market Frankford Hall bell pretzel Penn Penn’s Landing. </p>
+      </div>
+      <div class="column content">
+      <div id="chart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+  <div id="leaflet">
+  </div>
+</section>
+
+<section class="section">
+    <div class="container">
+    <div class="columns">
+      <div class="column content">
+        <h1 class="title">Housing Inspection Applications by month for 2016</h1>
+        <div id="bar-chart"></div>
+      </div>
+        <div class="column content">
+          <h1 class="title">Some other chart</h1>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Goofing with L&I data</strong> by <a href="http://wknowles.github.io">Will Knowles</a>. The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+        is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC ANS 4.0</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+    <!--build:js js/main.min.js-->
+    <script src="js/moment.min.js"></script>
+    <script src="js/d3-choropleth.js"></script>
+    <script src="js/census-leaflet.js"></script>
+    <script src="js/d3-bar-chart.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>

@@ -1,0 +1,89 @@
+// $blue: #72d0eb // Update blue
+// $pink: #ffb3b3 // Add pink
+// $family-serif: "Georgia", serif // Add a serif family
+
+// // Override generated variables here
+// // For example, by default, the $danger color is $red and the font is sans-serif
+// // You can change these values:
+
+// $danger: $orange // Use the existing orange
+// $family-primary: $family-serif // Use the new serif family
+
+@import "bulma";
+
+
+path {
+    fill: #fff;
+    stroke: #7f7f7f;
+    stroke-width: .75px;
+    pointer-events: all;
+}
+
+.fill {
+      fill: #fff;
+      stroke: white;
+}
+
+.map {
+  //border: 1px solid #dedede;
+}
+
+.text {
+  font-family: sans-serif;
+  font-size: 24px;
+  color: #000;
+}
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis line, .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+#key    {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  // top: 385px;
+  // left: 410px;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 8px;
+  /*background: #FFFFE0;*/
+}
+
+// leaflet
+#leaflet {
+  height: 550px;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}

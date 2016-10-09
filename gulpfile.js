@@ -1,55 +1,94 @@
-var gulp = require('gulp');
+// if or when this file gets too big - the gulpfile can be split, and a task run from each file.
+// include the require-dir module - https://www.npmjs.com/package/require-dir
+// see this: http://macr.ae/article/splitting-gulpfile-multiple-files.html
 
-var clean = require('gulp-clean');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
+// require gulp
+var gulp = require('gulp'),
+    browserSync = require('browser-sync').create(),
+    sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    useref = require('gulp-useref'),
+    uglify = require('gulp-uglify'),
+    gulpIf = require('gulp-if'),
+    cssnano = require('gulp-cssnano'),
+    imagemin = require('gulp-imagemin'),
+    cache = require('gulp-cache'),
+    del = require('del'),
+    runSequence = require('run-sequence');
 
-
-var bases = {
-    app: 'app/',
-    dist: 'dist/'
-};
-
-var paths = {
-    scripts: ['js/**/*.js'],
-    styles: ['css/**/*.css'],
-    html: ['*.html','index.html', '404.html'],
-    data: ['data/*'],
-};
-
-// Delete the dist directory
-gulp.task('clean', function() {
-    return gulp.src(bases.dist)
-    .pipe(clean());
+// gulp task to run browserSync
+gulp.task('browserSync', function() {
+  browserSync.init({
+    server: {
+      baseDir: 'app'
+    },
+  });
 });
 
-// Process scripts and concatenate them into one output file
-gulp.task('scripts', ['clean'], function() {
-    gulp.src(paths.scripts, {cwd: bases.app})
-    .pipe(uglify())
-    .pipe(concat('app.min.js'))
-    .pipe(gulp.dest(bases.dist + 'js/'));
+// gulp task to process sass into css
+gulp.task('sass', function(){
+  return gulp.src('app/scss/**/*.scss') // Gets all files ending with .scss in app/scss
+    .pipe(sass({style: 'expanded', includePaths: ['node_modules/bulma'], errLogToConsole: true })) // Converts Sass to CSS with gulp-sass
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('app/css')) // Sets temporary dest of css (for dev - min in dist)
+    .pipe(browserSync.reload({ // Tells browserSync to reload when sass changes
+      stream: true
+    }));
 });
 
-// Copy all other files to dist directly
-gulp.task('copy', ['clean'], function() {
- // Copy html
-    gulp.src(paths.html, {cwd: bases.app})
-    .pipe(gulp.dest(bases.dist));
-
- // Copy styles
-    gulp.src(paths.styles, {cwd: bases.app})
-    .pipe(gulp.dest(bases.dist + 'css'));
-
- // Copy data
-    gulp.src(paths.data, {cwd: bases.app})
-    .pipe(gulp.dest(bases.dist + 'data'));
+// Copy data
+gulp.task('data', function(){
+  return gulp.src('app/data/*')
+    .pipe(gulp.dest('dist/data/'));
 });
 
-// Define the default task as a sequence of the above tasks
-gulp.task('default', ['clean', 'scripts', 'copy']);
+// gulp task to watch for changes and then run tasks above
+gulp.task('watch', ['browserSync', 'sass'], function (){
+  gulp.watch('app/scss/**/*.scss', ['sass']);
+  gulp.watch('app/*.html', browserSync.reload);
+  gulp.watch('app/js/**/*.js', browserSync.reload);
+});
 
-// A development task to run anytime a file changes
-gulp.task('watch', function() {
-    gulp.watch('app/**/*', ['js', 'copy']);
+// default task for development - just run `gulp`
+gulp.task('default', function (callback) {
+  runSequence(['sass', 'browserSync', 'data', 'watch'],
+    callback
+  );
+});
+
+//  -------------------------------------------------------   //
+//  the tasks below are used when building for distribution   //
+//  -------------------------------------------------------   //
+
+// clean up dist folder
+gulp.task('clean:dist', function() {
+  return del.sync('dist');
+});
+
+// gulp task to combine, minify and concatenate css & js
+gulp.task('useref', function(){
+  return gulp.src('app/*.html')
+    .pipe(useref())
+    .pipe(gulpIf('*.js', uglify()))
+// Minifies only if it's a CSS file
+    .pipe(gulpIf('*.css', cssnano()))
+    .pipe(gulp.dest('dist'));
+});
+
+// gulp task to optimize images
+gulp.task('images', function(){
+  return gulp.src('app/images/**/*.+(png|jpg|jpeg|gif|svg)')
+// Caching images that ran through imagemin
+  .pipe(cache(imagemin({
+      interlaced: true
+    })))
+  .pipe(gulp.dest('dist/images'));
+});
+
+// gulp build to put everything together
+gulp.task('build', function (callback) {
+  runSequence('clean:dist',
+    ['sass', 'useref', 'images', 'data'],
+    callback
+  );
 });
