@@ -30,7 +30,7 @@ gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Gets all files ending with .scss in app/scss
     .pipe(sass({style: 'expanded', includePaths: ['node_modules/bulma'], errLogToConsole: true })) // Converts Sass to CSS with gulp-sass
     .pipe(autoprefixer())
-    .pipe(gulp.dest('app/css')) // Sets temporary dest of css (for dev - min in dist)
+    .pipe(gulp.dest('app/css')) // Sets temporary dest of css (for dev - min in docs)
     .pipe(browserSync.reload({ // Tells browserSync to reload when sass changes
       stream: true
     }));
@@ -39,7 +39,7 @@ gulp.task('sass', function(){
 // Copy data
 gulp.task('data', function(){
   return gulp.src('app/data/*')
-    .pipe(gulp.dest('dist/data/'));
+    .pipe(gulp.dest('docs/data/'));
 });
 
 // gulp task to watch for changes and then run tasks above
@@ -57,12 +57,12 @@ gulp.task('default', function (callback) {
 });
 
 //  -------------------------------------------------------   //
-//  the tasks below are used when building for distribution   //
+//  the tasks below are used when building for docsribution   //
 //  -------------------------------------------------------   //
 
-// clean up dist folder
-gulp.task('clean:dist', function() {
-  return del.sync('dist');
+// clean up docs folder
+gulp.task('clean:docs', function() {
+  return del.sync('docs');
 });
 
 // gulp task to combine, minify and concatenate css & js
@@ -72,7 +72,7 @@ gulp.task('useref', function(){
     .pipe(gulpIf('*.js', uglify()))
 // Minifies only if it's a CSS file
     .pipe(gulpIf('*.css', cssnano()))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('docs'));
 });
 
 // gulp task to optimize images
@@ -82,12 +82,12 @@ gulp.task('images', function(){
   .pipe(cache(imagemin({
       interlaced: true
     })))
-  .pipe(gulp.dest('dist/images'));
+  .pipe(gulp.dest('docs/images'));
 });
 
 // gulp build to put everything together
 gulp.task('build', function (callback) {
-  runSequence('clean:dist',
+  runSequence('clean:docs',
     ['sass', 'useref', 'images', 'data'],
     callback
   );
