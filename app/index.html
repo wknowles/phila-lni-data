@@ -14,26 +14,29 @@
       <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
       <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
     </head>
-  <body class="animated fadeIn">
-<section class="hero is-dark is-medium is-bold">
+  <body>
+<section class="hero is-medium is-dark is-bold">
   <div class="hero-body">
     <div class="container">
       <h1 class="title">
-        A quick look at Philadadelphia's L&I Data.
+        Identifying substandard rental housing in Philadelphia.
       </h1>
       <h2 class="subtitle">
-        Made during <a href="">Code for Philly's</a> <a href="">#CaaSH</a> hackathon.
+        How can we use L&I data to highlight at risk properties?
       </h2>
+      <h3>
+        Part of <a href="">Code for Philly's</a> <a href="">#CaaSH</a> hackathon.
+      </h3>
     </div>
   </div>
 </section>
 
-<section class="section">
+<!-- <section class="section">
   <div class="container">
     <nav class="level">
       <div id="totalLicense" class="level-item has-text-centered">
         <p  class="heading">Total active rental licenses</p>
-        <!-- <p class="title">3,456</p> -->
+         <p class="title">3,456</p>
       </div>
       <div class="level-item has-text-centered">
         <p class="heading">Total Number of Census Tracts</p>
@@ -49,7 +52,7 @@
       </div>
     </nav>
   </div>
-</section>
+</section> -->
 
 <section class="section">
   <div class="container">
@@ -63,8 +66,16 @@
       <h3>Methodology</h3>
         <p> Some words about the graphic. practice MOVE Orange Line phantic Rocky tomato pie Flyers Wawa beer distributor Yuengling soda soft pretzel NoLibs Comcast Temple Old City Betsy Ross Bob and Barbara's Victory Roots state store bike race Phillies Utley Reading Terminal Market Frankford Hall bell pretzel Penn Penn’s Landing. </p>
       </div>
-      <div class="column content">
-      <div id="chart"></div>
+      <div class="column">
+        <div id="chart"></div>
+      <nav class="level">
+      <div id="censusTract" class="level-item has-text-centered">
+        <p  class="heading">Census Tract</p>
+      </div>
+      <div id="censusTotal" class="level-item has-text-centered">
+        <p class="heading">Total</p>
+      </div>
+    </nav>
       </div>
     </div>
   </div>

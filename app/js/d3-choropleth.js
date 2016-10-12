@@ -10,7 +10,6 @@ var svg = d3.select('#chart').append('svg')
     .attr('height', height)
     .attr('class', 'map');
 
-
 var projection = d3.geoMercator()
     .center([-74.94, 40.002])
     .scale(80000);
@@ -18,7 +17,9 @@ var projection = d3.geoMercator()
 var path = d3.geoPath()
     .projection(projection);
 
-var totalLicense = d3.select('#totalLicense').insert('p')
+var censusTract = d3.select('#censusTract').insert('p')
+    .attr('class', 'title');
+var censusTotal = d3.select('#censusTotal').insert('p')
     .attr('class', 'title');
 
 // read map file and data
@@ -44,7 +45,7 @@ function ready(error, map, data) {
     totalById[+d.count_censustract] = +d.censustract;
   });
 
-  var minimumColor = '#fff', maximumColor = '#de2d26';
+  var minimumColor = '#fff', maximumColor = '#000';
   var color = d3.scaleLinear()
               .domain(d3.extent(data, function(d) { return +d.count_censustract; }))
               .range([minimumColor, maximumColor]);
@@ -72,7 +73,9 @@ function ready(error, map, data) {
     d3.select(this).transition().duration(300).style('opacity', 1);
     div.transition().duration(300)
     .style('opacity', 1);
-    div.html('Census tract = ' + d3.format('.0f')(d.properties.NAME10) + '<br> No. of licenses = ' + tractById[d3.format('.0f')(d.properties.NAME10)]);
+    censusTract.html(d3.format('.0f')(d.properties.NAME10));
+    censusTotal.html(tractById[d3.format('.0f')(d.properties.NAME10)]);
+    //div.html('Census tract = ' + d3.format('.0f')(d.properties.NAME10) + '<br> No. of licenses = ' + tractById[d3.format('.0f')(d.properties.NAME10)]);
     // console.log(d.properties.NAME10);
     // console.log(d3.format(".0f")(d.properties.NAME10));
   })
@@ -82,7 +85,11 @@ function ready(error, map, data) {
     .style('opacity', 1);
     div.transition().duration(300)
     .style('opacity', 1);
+    censusTract.html('-');
+    censusTotal.html('-');
   });
+
+
 
 //console.log(d3.extent(data, function(d) { return +d.count_censustract; }))
 //console.log(d3.selectAll(data, function(d) { return +d.count_censustract; }).size())
@@ -90,47 +97,42 @@ function ready(error, map, data) {
 // console.log(tractById[3])
 //console.log(JSON.stringify(totalById))
 
-//Adding legend for our Choropleth
-  var w = 60, h = 220;
+//Add key to Choropleth
+  var w = 250, h = 60;
 
-  var key = d3.select('#chart').append('svg')
-            .attr('id', 'key')
-            .attr('class', 'key')
+  var key = svg.append('g')
             .attr('width', w)
-            .attr('height', h);
+            .attr('height', h)
+            .attr('id', 'key')
+            .attr('class', 'key');
 
   var legend = key.append('defs')
                 .append('svg:linearGradient')
                 .attr('id', 'gradient')
-                .attr('x1', '100%')
+                .attr('x1', '0%')
                 .attr('y1', '0%')
                 .attr('x2', '100%')
-                .attr('y2', '100%')
+                .attr('y2', '0%')
                 .attr('spreadMethod', 'pad');
 
-  legend.append('stop').attr('offset', '0%').attr('stop-color', maximumColor).attr('stop-opacity', 1);
-  legend.append('stop').attr('offset', '100%').attr('stop-color', minimumColor).attr('stop-opacity', 1);
+  legend.append('stop').attr('offset', '0%').attr('stop-color', minimumColor).attr('stop-opacity', 1);
+  legend.append('stop').attr('offset', '100%').attr('stop-color', maximumColor).attr('stop-opacity', 1);
 
-  key.append('rect').attr('width', w - 40).attr('height', h - 20).style('fill', 'url(#gradient)').attr('transform', 'translate(0,10)');
+  key.append('rect').attr('width', w - 10).attr('height', h - 40).style('fill', 'url(#gradient)').attr('transform', 'translate(5,0)');
 
-  var y = d3.scaleLinear()
-          .range([h - 20, 0])
+  var x = d3.scaleLinear()
+          .range([ 0, w - 10])
           .domain(d3.extent(data, function(d) { return +d.count_censustract; }));
 
-  var yAxis = d3.axisRight(y);
+  var xAxis = d3.axisBottom(x);
   key.append('g')
-  .attr('class', 'y axis')
-  .attr('transform', 'translate(24,10)')
-  .call(yAxis).append('text')
-  .attr('transform', 'rotate(-90)')
-  .attr('y', 30).attr('dy', '1em')
-  .style('text-anchor', 'end')
-  .text('Number of');
+  .attr('class', 'z axis')
+  .attr('transform', 'translate(5,20)')
+  .call(xAxis).selectAll('text')
+            .style('text-anchor', 'end')
+            .attr('dx', '-.8em')
+            .attr('dy', '.15em')
+            .attr('transform', 'rotate(-65)' );
+//end of key
 
-// show ...
-  totalLicense.html(d3.sum(data, function(d) { return +d.count_censustract; }));
-//  totalTract.html(d3.selectAll(data, function(d) { return +d.count_censustract; }).size());
-
-} // <-- End of Choropleth drawing
-
-
+}// <-- End of Choropleth drawing
