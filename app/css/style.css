@@ -4681,9 +4681,14 @@ path {
 
 div.tooltip {
   position: absolute;
-  text-align: left;
-  padding: 8px;
-  /*background: #FFFFE0;*/ }
+  text-align: center;
+  width: 160px;
+  height: 42px;
+  padding: 4px;
+  font: 12px sans-serif;
+  background: white;
+  border: 1px solid #7f7f7f;
+  border-radius: 8px; }
 
 #leaflet {
   height: 550px; }
@@ -4691,7 +4696,6 @@ div.tooltip {
 .info {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;
-  background: white;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 5px; }
