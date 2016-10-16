@@ -17,11 +17,6 @@ var projection = d3.geoMercator()
 var path = d3.geoPath()
     .projection(projection);
 
-// var censusTract = d3.select('#censusTract').insert('p')
-//     .attr('class', 'title');
-// var censusTotal = d3.select('#censusTotal').insert('p')
-//     .attr('class', 'title');
-
 // read map file and data
 queue()
   .defer(d3.json, 'data/census_tracts.json')
@@ -32,10 +27,10 @@ queue()
 //  + '&$where=issuedate>%272016-01-01T00:00:00.000%27'
   + '&licensestatus=Active'
   + '&revenuecode=3202'
-  + '&$$app_token=8nwKL3zJBeBIdPKTZzwuKspfh')) // app_token should be REDACTED but whatevs... security :-(
+  + '&$$app_token=8nwKL3zJBeBIdPKTZzwuKspfh'))
   .await(ready);
 
-//Start of Choropleth drawing
+//Start Choropleth
 function ready(error, map, data) {
   var tractById = {};
   var totalById = {};
@@ -68,13 +63,11 @@ function ready(error, map, data) {
     }
   })
 
-//Adding mouseevents
+//Add mouseevents for tooltip
   .on('mouseover', function(d) {
     tooltip.html('Census tract = ' + d3.format('.0f')(d.properties.NAME10) + '<br> No. of licenses = ' + tractById[d3.format('.0f')(d.properties.NAME10)])
         .style('left', (d3.event.pageX - 70) + 'px')
         .style('top', (d3.event.pageY + 30) + 'px');
-    // console.log(d.properties.NAME10);
-    // console.log(d3.format(".0f")(d.properties.NAME10));
   })
   .on('mouseout', function() {
     d3.select(this)
@@ -82,8 +75,6 @@ function ready(error, map, data) {
     .style('opacity', 1);
     tooltip.transition().duration(300)
     .style('opacity', 1);
-    // tooltip.html('-');
-    // tooltip.html('-');
   });
 
   svg.append('text')
@@ -93,12 +84,6 @@ function ready(error, map, data) {
         .style('font-size', '16px')
         .style('text-decoration', 'underline')
         .text('Active rental licenses by census tract');
-
-//console.log(d3.extent(data, function(d) { return +d.count_censustract; }))
-//console.log(d3.selectAll(data, function(d) { return +d.count_censustract; }).size())
-// console.log(totalById[3])
-// console.log(tractById[3])
-//console.log(JSON.stringify(totalById))
 
 //Add key to Choropleth
   var w = 60, h = 180;
@@ -136,15 +121,6 @@ function ready(error, map, data) {
             .style('text-anchor', 'end')
             .attr('dx', '2.5em')
             .attr('dy', '0em');
-            //.attr('transform', 'rotate(-65)' );
+//end key
 
-  // .attr('class', 'y axis')
-  // .attr('transform', 'translate(24,10)')
-  // .call(yAxis).append('text')
-  //     .attr('transform', 'rotate(-90)')
-  //     .attr('y', 30).attr('dy', '1em')
-  //     .style('text-anchor', 'end')
-  //     .text('Number of');
-//end of key
-
-}// <-- End of Choropleth drawing
+}// end choropleth
